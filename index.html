@@ -55,6 +55,32 @@
             text-decoration: none;
             font-size: 13px;
         }
+        #admin-panel {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #1c2a48;
+        }
+        #admin-panel input, #admin-panel textarea, #admin-panel select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #333;
+            color: #e5e7eb;
+            border: 1px solid #555;
+        }
+        #admin-panel button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        #admin-panel button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -71,7 +97,7 @@
         <div class="sep"></div>
         <a href="javascript:void(0)" onclick="toggleAdminPanel()" class="adminBtn">Panel Administratora</a>
 
-        <div id="admin-panel" style="display:none; margin-top: 20px; padding: 20px; background-color: #1c2a48;">
+        <div id="admin-panel">
             <h3>Dodaj obiekt:</h3>
             <form id="add-object-form">
                 <input type="text" id="object-name" placeholder="Nazwa obiektu" required>
@@ -167,7 +193,7 @@
         // Funkcja do pokazania/ukrycia panelu admina
         function toggleAdminPanel() {
             const panel = document.getElementById("admin-panel");
-            panel.style.display = (panel.style.display === "none") ? "block" : "none";
+            panel.style.display = (panel.style.display === "none" || panel.style.display === "") ? "block" : "none";
         }
 
         // Inicjalizacja
