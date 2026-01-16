@@ -193,7 +193,11 @@
         // Funkcja do pokazania/ukrycia panelu admina
         function toggleAdminPanel() {
             const panel = document.getElementById("admin-panel");
-            panel.style.display = (panel.style.display === "none" || panel.style.display === "") ? "block" : "none";
+            if (panel.style.display === "none" || panel.style.display === "") {
+                panel.style.display = "block";
+            } else {
+                panel.style.display = "none";
+            }
         }
 
         // Inicjalizacja
@@ -203,4 +207,3 @@
 
 </body>
 </html>
-
