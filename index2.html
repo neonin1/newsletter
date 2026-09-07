@@ -2,15 +2,25 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>SKI&Sun - Aktualności</title>
     <style>
+        :root {
+            color-scheme: dark;
+        }
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #0b1220;
             color: #e5e7eb;
             margin: 0;
             padding: 24px;
+            padding-top: max(24px, env(safe-area-inset-top));
+            padding-bottom: max(24px, env(safe-area-inset-bottom));
+            padding-left: max(24px, env(safe-area-inset-left));
+            padding-right: max(24px, env(safe-area-inset-right));
         }
         .card {
             max-width: 900px;
@@ -20,6 +30,48 @@
             border-radius: 16px;
             padding: 18px 18px 8px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+        .header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.35rem;
+            line-height: 1.25;
+            flex: 1;
+            min-width: 0;
+        }
+        .gearBtn {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #93c5fd;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            padding: 0;
+        }
+        .gearBtn:active {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .gearBtn svg {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+        .gearBtn[aria-expanded="true"] {
+            background: rgba(147, 197, 253, 0.18);
+            border-color: rgba(147, 197, 253, 0.45);
         }
         .line {
             display: flex;
@@ -36,6 +88,7 @@
             height: 12px;
             border-radius: 999px;
             margin-top: 4px;
+            flex-shrink: 0;
         }
         .msg {
             border-radius: 12px;
@@ -44,22 +97,12 @@
             background: rgba(0, 0, 0, 0.15);
             margin: 10px 0;
         }
-        .adminBtn {
-            display: inline-flex;
-            align-items: center;
-            padding: 10px 12px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            color: #93c5fd;
-            text-decoration: none;
-            font-size: 13px;
-        }
         #admin-panel {
             display: none;
             margin-top: 20px;
             padding: 20px;
             background-color: #1c2a48;
+            border-radius: 12px;
         }
         #admin-panel input, #admin-panel textarea, #admin-panel select {
             width: 100%;
@@ -69,6 +112,7 @@
             background-color: #333;
             color: #e5e7eb;
             border: 1px solid #555;
+            font-size: 16px; /* zapobiega zoomowi iOS przy focusie */
         }
         #admin-panel button {
             padding: 10px 15px;
@@ -77,25 +121,44 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 16px;
         }
         #admin-panel button:hover {
             background-color: #45a049;
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+                padding-top: max(12px, env(safe-area-inset-top));
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
+            }
+            .card {
+                padding: 14px 12px 8px;
+            }
+            .header h1 {
+                font-size: 1.15rem;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h1>SKI&Sun - Aktualne informacje:</h1>
+        <div class="header">
+            <h1>SKI&Sun - Aktualne informacje:</h1>
+            <button type="button" class="gearBtn" id="gear-btn" onclick="toggleAdminPanel()" aria-label="Ustawienia / Panel administratora" aria-controls="admin-panel" aria-expanded="false" title="Ustawienia">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M19.4 13.5a7.8 7.8 0 0 0 .05-1.1c0-.37-.02-.74-.05-1.1l2.05-1.6a.5.5 0 0 0 .12-.64l-1.94-3.36a.5.5 0 0 0-.6-.22l-2.42.97a8.3 8.3 0 0 0-1.9-1.1L14.4 2.5a.5.5 0 0 0-.5-.4h-3.8a.5.5 0 0 0-.5.4l-.37 2.55c-.67.27-1.3.64-1.9 1.1l-2.42-.97a.5.5 0 0 0-.6.22L2.37 9.06a.5.5 0 0 0 .12.64l2.05 1.6c-.03.36-.05.73-.05 1.1 0 .37.02.74.05 1.1l-2.05 1.6a.5.5 0 0 0-.12.64l1.94 3.36c.13.23.4.32.63.22l2.42-.97c.58.45 1.22.82 1.9 1.1l.37 2.55c.04.23.25.4.5.4h3.8c.25 0 .46-.17.5-.4l.37-2.55c.67-.27 1.32-.64 1.9-1.1l2.42.97c.23.1.5 0 .63-.22l1.94-3.36a.5.5 0 0 0-.12-.64l-2.05-1.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
 
         <div id="objects-container"></div>
 
         <div class="sep"></div>
         <h2>Aktualne komunikaty:</h2>
         <div id="messages-container"></div>
-
-        <div class="sep"></div>
-        <a href="javascript:void(0)" onclick="toggleAdminPanel()" class="adminBtn">Panel Administratora</a>
 
         <div id="admin-panel">
             <h3>Dodaj obiekt:</h3>
@@ -133,7 +196,7 @@
 
         function displayObjects() {
             const container = document.getElementById("objects-container");
-            container.innerHTML = ''; // Wyczyść zawartość przed dodaniem nowych obiektów
+            container.innerHTML = '';
 
             objects.forEach(obj => {
                 const div = document.createElement("div");
@@ -153,7 +216,7 @@
 
         function displayMessages() {
             const container = document.getElementById("messages-container");
-            container.innerHTML = ''; // Wyczyść zawartość przed dodaniem nowych wiadomości
+            container.innerHTML = '';
 
             messages.forEach(msg => {
                 const div = document.createElement("div");
@@ -167,7 +230,6 @@
             });
         }
 
-        // Funkcja do dodawania obiektu
         document.getElementById("add-object-form").addEventListener("submit", function(event) {
             event.preventDefault();
             const name = document.getElementById("object-name").value;
@@ -180,7 +242,6 @@
             document.getElementById("add-object-form").reset();
         });
 
-        // Funkcja do dodawania komunikatu
         document.getElementById("add-message-form").addEventListener("submit", function(event) {
             event.preventDefault();
             const text = document.getElementById("message-text").value;
@@ -190,13 +251,17 @@
             document.getElementById("add-message-form").reset();
         });
 
-        // Funkcja do pokazania/ukrycia panelu admina
         function toggleAdminPanel() {
             const panel = document.getElementById("admin-panel");
-            panel.style.display = (panel.style.display === "none" || panel.style.display === "") ? "block" : "none";
+            const gear = document.getElementById("gear-btn");
+            const open = panel.style.display === "none" || panel.style.display === "";
+            panel.style.display = open ? "block" : "none";
+            gear.setAttribute("aria-expanded", open ? "true" : "false");
+            if (open) {
+                panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
         }
 
-        // Inicjalizacja
         displayObjects();
         displayMessages();
     </script>
